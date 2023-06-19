@@ -171,9 +171,11 @@ if __name__ == "__main__":
     # add arguments base_dir
     parser = argparse.ArgumentParser()
     parser.add_argument('--base_dir', type=str, default=BASE_DIR)
+    parser.add_argument('--batch_size', type=int, default=BATCH_SIZE)
+    parser.add_argument('--save', type=str, default=SAVE_FOLDER)
     args = parser.parse_args()
     BASE_DIR = args.base_dir
-    print("BASE_DIR: ", BASE_DIR)
+    BATCH_SIZE = args.batch_size
     smile_train, smile_test = CNN2Head_input.getSmileImage(BASE_DIR=BASE_DIR)
     train()
 
