@@ -6,6 +6,10 @@ import numpy as np
 import BKNetStyle
 from const import *
 import sys
+import os
+import argparse
+os.environ["CUDA_VISIBLE_DEVICES"] = "0" 
+
 
 sys.setrecursionlimit(150000)
 sess = tf.compat.v1.Session()
@@ -166,4 +170,11 @@ def train():
 
 
 if __name__ == "__main__":
+    # add arguments base_dir
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--base_dir', type=str, default=BASE_DIR)
+    args = parser.parse_args()
+    BASE_DIR = args.base_dir
+    print("BASE_DIR: ", BASE_DIR)
     train()
+
