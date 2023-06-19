@@ -3,7 +3,7 @@ import scipy
 import random
 from const import *
 
-def getSmileImage():
+def getSmileImage(BASE_DIR=BASE_DIR):
     print("Loading smile data...")
     X1 = np.load(BASE_DIR + 'dataset/data/train.npy')
     X2 = np.load(BASE_DIR + 'dataset/data/test.npy')

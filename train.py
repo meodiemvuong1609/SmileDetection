@@ -17,7 +17,6 @@ sess.as_default()
 tf.compat.v1.disable_eager_execution()
 np_load_old = np.load
 np.load = lambda *a, **k: np_load_old(*a, allow_pickle=True, **k)
-smile_train, smile_test = CNN2Head_input.getSmileImage()
 
 def one_hot(index, num_classes):
     tmp = np.zeros(num_classes, dtype=np.float32)
@@ -56,13 +55,6 @@ smile_true_pred = tf.reduce_sum(
     tf.cast(smile_correct_prediction, dtype=tf.float32) * smile_mask)
 
 
-train_data = []
-# Mask: Smile -> 0
-for i in range(len(smile_train) * 10):
-    img = (smile_train[i % 3000][0] - 128) / 255.0
-    label = (smile_train[i % 3000][1])
-    train_data.append((img, one_hot(label, 4), 0.0))
-
 
 def init_save_model():
     saver = tf.compat.v1.train.Saver()
@@ -97,6 +89,12 @@ def train():
     writer = tf.compat.v1.summary.FileWriter("./summary/")
 
     learning_rate = tf.compat.v1.get_collection("learning_rate")[0]
+    train_data = []
+    # Mask: Smile -> 0
+    for i in range(len(smile_train) * 10):
+        img = (smile_train[i % 3000][0] - 128) / 255.0
+        label = (smile_train[i % 3000][1])
+        train_data.append((img, one_hot(label, 4), 0.0))
 
     current_epoch = (int)(global_step.eval(session=sess) / (len(train_data) // BATCH_SIZE))
     for epoch in range(current_epoch + 1, NUM_EPOCHS):
@@ -176,5 +174,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     BASE_DIR = args.base_dir
     print("BASE_DIR: ", BASE_DIR)
+    smile_train, smile_test = CNN2Head_input.getSmileImage(BASE_DIR=BASE_DIR)
     train()
 
