@@ -176,6 +176,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     BASE_DIR = args.base_dir
     BATCH_SIZE = args.batch_size
+    SAVE_FOLDER = args.save
     smile_train, smile_test = CNN2Head_input.getSmileImage(BASE_DIR=BASE_DIR)
     train()
 

@@ -8,12 +8,12 @@ from mtcnn.mtcnn import MTCNN
 
 
 def load_network():
-    sess = tf.Session()
-    x = tf.placeholder(tf.float32, [None, 28, 28, 1])
+    sess = tf.compat.v1.Session()
+    x = tf.compat.v1.placeholder(tf.float32, [None, 28, 28, 1])
     y_smile_conv, phase_train, keep_prob = BKNetStyle.BKNetModel(x)
     print('Restore model')
-    saver = tf.train.Saver()
-    saver.restore(sess, './save/20210107/model.ckpt')
+    saver = tf.compat.v1.train.Saver()
+    saver.restore(sess, './save/exp/model.ckpt')
     print('OK')
     return sess, x, y_smile_conv, phase_train, keep_prob
 
