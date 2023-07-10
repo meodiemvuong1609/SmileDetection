@@ -161,10 +161,12 @@ if __name__ == "__main__":
     parser.add_argument('--base_dir', type=str, default=BASE_DIR)
     parser.add_argument('--batch_size', type=int, default=BATCH_SIZE)
     parser.add_argument('--save', type=str, default=SAVE_FOLDER)
+    parser.add_argument('--num_epochs', type=int, default=NUM_EPOCHS)
     args = parser.parse_args()
     BASE_DIR = args.base_dir
     BATCH_SIZE = args.batch_size
     SAVE_FOLDER = args.save
+    NUM_EPOCHS = args.num_epochs
     smile_train, smile_test = CNN2Head_input.getSmileImage(BASE_DIR=BASE_DIR)
     train()
 
