@@ -13,7 +13,7 @@ def load_network():
     y_smile_conv, phase_train, keep_prob = BKNetStyle.BKNetModel(x)
     print('Restore model')
     saver = tf.compat.v1.train.Saver()
-    saver.restore(sess, './save/exp/model.ckpt')
+    saver.restore(sess, './save/best/model.ckpt')
     print('OK')
     return sess, x, y_smile_conv, phase_train, keep_prob
 
@@ -41,39 +41,40 @@ def main(sess, x, y_smile_conv,  phase_train, keep_prob):
         # detect face and crop face, convert to gray, resize to 48x48
         original_img = img
         result = detector.detect_faces(original_img)
+        print(result)
         if not result:
             cv2.imshow("result", original_img)
             continue
-        face_position = result[0].get('box')
-        x_coordinate = face_position[0]
-        y_coordinate = face_position[1]
-        w_coordinate = face_position[2]
-        h_coordinate = face_position[3]
-        img = original_img[y_coordinate:y_coordinate +
-                           h_coordinate, x_coordinate:x_coordinate+w_coordinate]
-        if(img.size == 0):
-            cv2.imshow("result", original_img)
-            continue
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        img = cv2.resize(img, (28, 28))
-        img = (img - 128) / 255.0
-        T = np.zeros([28, 28, 1])
-        T[:, :, 0] = img
-        test_img = []
-        test_img.append(T)
-        test_img = np.asarray(test_img)
+        for r in result:
+            face_position = r.get('box')
+            x_coordinate = face_position[0]
+            y_coordinate = face_position[1]
+            w_coordinate = face_position[2]
+            h_coordinate = face_position[3]
+            img = original_img[y_coordinate:y_coordinate +
+                            h_coordinate, x_coordinate:x_coordinate+w_coordinate]
+            if(img.size == 0):
+                cv2.imshow("result", original_img)
+                continue
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            img = cv2.resize(img, (28, 28))
+            img = (img - 128) / 255.0
+            T = np.zeros([28, 28, 1])
+            T[:, :, 0] = img
+            test_img = []
+            test_img.append(T)
+            test_img = np.asarray(test_img)
 
-        T = np.reshape(T, (-1, 28, 28, 1))
+            T = np.reshape(T, (-1, 28, 28, 1))
 
-        predict_y_smile_conv = sess.run(y_smile_conv, feed_dict={
-                                        x: test_img, phase_train: False, keep_prob: 1})
+            predict_y_smile_conv = sess.run(y_smile_conv, feed_dict={
+                                            x: test_img, phase_train: False, keep_prob: 1})
 
-        smile_label = "not miling" if np.argmax(
-            predict_y_smile_conv) == 0 else "smiling"
+            smile_label = "not miling" if np.argmax(
+                predict_y_smile_conv) == 0 else "smiling"
 
-        label = "{}".format(smile_label)
-        draw_label(original_img, x_coordinate, y_coordinate,
-                   w_coordinate, h_coordinate, label)
+            label = "{}".format(smile_label)
+            draw_label(original_img, x_coordinate, y_coordinate, w_coordinate, h_coordinate, label)
 
         cv2.imshow("result", original_img)
         key = cv2.waitKey(1)

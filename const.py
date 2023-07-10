@@ -8,10 +8,10 @@ EPSILON = 0.001
 WEIGHT_DECAY = 0.01
 DECAY_STEP = 2000
 DECAY_LR_RATE = 0.95
-BATCH_SIZE = 128
+BATCH_SIZE = 512
 BASE_DIR = 'D:\Project\SmileDetection\\'
 USE_GPU = True
-SAVE_FOLDER = './save/exp/'
+SAVE_FOLDER = './save/exp4/'
 SAVE_FOLDER2 = './save/exp2/'
 SAVE_FOLDER3 = './save/exp3/'
 

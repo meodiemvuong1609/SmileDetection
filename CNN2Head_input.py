@@ -5,8 +5,8 @@ from const import *
 
 def getSmileImage(BASE_DIR=BASE_DIR):
     print("Loading smile data...")
-    X1 = np.load(BASE_DIR + 'dataset/data/train.npy')
-    X2 = np.load(BASE_DIR + 'dataset/data/test.npy')
+    X1 = np.load(BASE_DIR + 'dataset/data1/train.npy')
+    X2 = np.load(BASE_DIR + 'dataset/data1/test.npy')
     train_data = []
     test_data = []
     for i in range(X1.shape[0]):

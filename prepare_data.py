@@ -12,7 +12,8 @@ labels = []
 
 
 def convert_data():
-    X = []
+    X_smile = []
+    X_not_smile = []
     # loop over the input images
     for imagePath in sorted(list(paths.list_images(DATASET))):
         # load the image, pre-process it, and store it in the data list
@@ -24,15 +25,13 @@ def convert_data():
 
         # extract the class label from the image path and update the label list
         label = imagePath.split(os.path.sep)[-3]
-        label = "smiling" if label == "positives" else "not_smiling"
-        X.append((image, label))
-
-    for _ in range(10):
-        np.random.shuffle(X)
-
-    train_data, test_data = X[:10000], X[10000:]
-
-    np.save(BASE_DIR + 'dataset/data/train.npy', train_data)
-    np.save(BASE_DIR + 'dataset/data/test.npy', test_data)
+        if label == "positives":
+            X_smile.append((image, "smiling"))
+        else:
+            X_not_smile.append((image, "not_smiling"))
+    train_data = X_smile[:int(len(X_smile) * 0.8)] + X_not_smile[:int(len(X_not_smile) * 0.8)]
+    test_data = X_smile[int(len(X_smile) * 0.8):] + X_not_smile[int(len(X_not_smile) * 0.8):]
+    np.save(BASE_DIR + 'dataset/data1/train.npy', train_data)
+    np.save(BASE_DIR + 'dataset/data1/test.npy', test_data)
 
 convert_data()
