@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 import tensorflow as tf
 import BKNetStyle
-from const import *
 from mtcnn.mtcnn import MTCNN
 
 
@@ -33,15 +32,12 @@ def main(sess, x, y_smile_conv,  phase_train, keep_prob):
     while True:
         # get video frame
         ret, img = cap.read()
-
         if not ret:
             print("error: failed to capture image")
             return -1
-
         # detect face and crop face, convert to gray, resize to 48x48
         original_img = img
         result = detector.detect_faces(original_img)
-        print(result)
         if not result:
             cv2.imshow("result", original_img)
             continue
@@ -51,10 +47,9 @@ def main(sess, x, y_smile_conv,  phase_train, keep_prob):
             y_coordinate = face_position[1]
             w_coordinate = face_position[2]
             h_coordinate = face_position[3]
-            img = original_img[y_coordinate:y_coordinate +
-                            h_coordinate, x_coordinate:x_coordinate+w_coordinate]
+            img = original_img[y_coordinate:y_coordinate + h_coordinate, x_coordinate:x_coordinate+w_coordinate]
             if(img.size == 0):
-                cv2.imshow("result", original_img)
+                cv2.imshow("Camera", original_img)
                 continue
             img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
             img = cv2.resize(img, (28, 28))
@@ -64,23 +59,16 @@ def main(sess, x, y_smile_conv,  phase_train, keep_prob):
             test_img = []
             test_img.append(T)
             test_img = np.asarray(test_img)
-
             T = np.reshape(T, (-1, 28, 28, 1))
+            predict_y_smile_conv = sess.run(y_smile_conv, feed_dict={x: test_img, phase_train: False, keep_prob: 1})
 
-            predict_y_smile_conv = sess.run(y_smile_conv, feed_dict={
-                                            x: test_img, phase_train: False, keep_prob: 1})
-
-            smile_label = "not miling" if np.argmax(
-                predict_y_smile_conv) == 0 else "smiling"
+            smile_label = "not miling" if np.argmax(predict_y_smile_conv) == 0 else "smiling"
 
             label = "{}".format(smile_label)
             draw_label(original_img, x_coordinate, y_coordinate, w_coordinate, h_coordinate, label)
 
-        cv2.imshow("result", original_img)
+        cv2.imshow("Camera", original_img)
         key = cv2.waitKey(1)
-
-        if key == 27:
-            break
 
 
 if __name__ == '__main__':
