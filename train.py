@@ -8,8 +8,6 @@ from const import *
 import sys
 import os
 import argparse
-os.environ["CUDA_VISIBLE_DEVICES"] = "0" 
-
 
 sys.setrecursionlimit(150000)
 sess = tf.compat.v1.Session()
@@ -18,15 +16,11 @@ tf.compat.v1.disable_eager_execution()
 np_load_old = np.load
 np.load = lambda *a, **k: np_load_old(*a, allow_pickle=True, **k)
 
-def one_hot(index, num_classes):
-    tmp = np.zeros(num_classes, dtype=np.float32)
+def one_hot(index):
     if index == "smiling":
-        index = 1
+        return [0.0, 1.0]  # Smile
     else:
-        index = 0
-        tmp[index] = 1.0
-    tmp[index] = 1.0
-    return tmp
+        return [1.0, 0.0]  # Not Smile
 
 
 global_step = tf.compat.v1.train.get_or_create_global_step()
@@ -94,7 +88,7 @@ def train():
     for i in range(len(smile_train) * 10):
         img = (smile_train[i % 3000][0] - 128) / 255.0
         label = (smile_train[i % 3000][1])
-        train_data.append((img, one_hot(label, 4), 0.0))
+        train_data.append((img, one_hot(label), 0.0))
 
     current_epoch = (int)(global_step.eval(session=sess) / (len(train_data) // BATCH_SIZE))
     for epoch in range(current_epoch + 1, NUM_EPOCHS):
@@ -134,14 +128,9 @@ def train():
             batch_img = CNN2Head_input.augmentation(batch_img, 28)
             batch_img = np.reshape(batch_img, (-1, 28, 28, 1))
 
-            ttl, sml, l2l, _ = sess.run([loss, smile_loss, l2_loss, train_step],
-                                        feed_dict={x: batch_img, y_: batch_label, mask: batch_mask,
-                                                   phase_train: True,
-                                                   keep_prob: 0.5})
+            ttl, sml, l2l, _ = sess.run([loss, smile_loss, l2_loss, train_step], feed_dict={x: batch_img, y_: batch_label, mask: batch_mask,phase_train: True,keep_prob: 0.5})
 
-            smile_nb_true_pred += sess.run(smile_true_pred, feed_dict={x: batch_img, y_: batch_label, mask: batch_mask,
-                                                                       phase_train: True,
-                                                                       keep_prob: 0.5})
+            smile_nb_true_pred += sess.run(smile_true_pred, feed_dict={x: batch_img, y_: batch_label, mask: batch_mask, phase_train: True, keep_prob: 0.5})
 
             avg_ttl.append(ttl)
             avg_smile_loss.append(sml)

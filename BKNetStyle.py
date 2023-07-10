@@ -95,7 +95,7 @@ def VGG_ConvBlock(name, x, in_filters, out_filters, repeat, strides, phase_train
 def Input():
     x = tf.compat.v1.placeholder(
         tf.float32, [None, IMG_SIZE, IMG_SIZE, 1])
-    y_ = tf.compat.v1.placeholder(tf.float32, [None, 4])
+    y_ = tf.compat.v1.placeholder(tf.float32, [None, 2])
     mask = tf.compat.v1.placeholder(tf.float32, [BATCH_SIZE])
 
     return x, y_, mask

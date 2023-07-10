@@ -30,7 +30,7 @@ def convert_data():
     for _ in range(10):
         np.random.shuffle(X)
 
-    train_data, test_data = X[:10000], X[3000:]
+    train_data, test_data = X[:10000], X[10000:]
 
     np.save(BASE_DIR + 'dataset/data/train.npy', train_data)
     np.save(BASE_DIR + 'dataset/data/test.npy', test_data)
