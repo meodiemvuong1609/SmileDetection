@@ -8,6 +8,7 @@ from const import *
 import sys
 import os
 import argparse
+import matplotlib.pyplot as plt
 
 sys.setrecursionlimit(150000)
 sess = tf.compat.v1.Session()
@@ -90,6 +91,8 @@ def train():
         train_data.append((img, one_hot(label), 0.0))
 
     current_epoch = (int)(global_step.eval(session=sess) / (len(train_data) // BATCH_SIZE))
+    accuracy_lst = []
+    loss_lst = []
     for epoch in range(current_epoch + 1, NUM_EPOCHS):
         print("Epoch:", str(epoch))
         np.random.shuffle(train_data)
@@ -103,7 +106,7 @@ def train():
             train_mask.append(train_data[i][2])
 
         number_batch = len(train_data) // BATCH_SIZE
-
+        
         avg_ttl = []
         avg_rgl = []
         avg_smile_loss = []
@@ -130,18 +133,19 @@ def train():
             ttl, sml, l2l, _ = sess.run([loss, smile_loss, l2_loss, train_step], feed_dict={x: batch_img, y_: batch_label, mask: batch_mask,phase_train: True,keep_prob: 0.5})
 
             smile_nb_true_pred += sess.run(smile_true_pred, feed_dict={x: batch_img, y_: batch_label, mask: batch_mask, phase_train: True, keep_prob: 0.5})
-
+            
             avg_ttl.append(ttl)
             avg_smile_loss.append(sml)
 
             avg_rgl.append(l2l)
 
-        smile_train_accuracy = smile_nb_true_pred * 1.0 / smile_nb_train
-
-        avg_smile_loss = np.average(avg_smile_loss)
-
         avg_rgl = np.average(avg_rgl)
         avg_ttl = np.average(avg_ttl)
+        smile_train_accuracy = smile_nb_true_pred * 1.0 / smile_nb_train
+        avg_smile_loss = np.average(avg_smile_loss)
+        accuracy_lst.append(smile_train_accuracy)
+        loss_lst.append(avg_ttl)
+
 
         summary = sess.run(merge_summary, feed_dict={
             loss_summary_placeholder: avg_ttl})
@@ -154,6 +158,12 @@ def train():
 
         saver.save(sess, SAVE_FOLDER + "model.ckpt")
 
+    plt.plot(accuracy_lst, label='Training Accuracy')
+    plt.plot(loss_lst, label='Training Loss')
+    plt.xlabel('Epoch')
+    plt.ylabel('Value')
+    plt.legend()
+    plt.show()
 
 if __name__ == "__main__":
     # add arguments base_dir
