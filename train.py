@@ -84,10 +84,9 @@ def train():
 
     learning_rate = tf.compat.v1.get_collection("learning_rate")[0]
     train_data = []
-    # Mask: Smile -> 0
-    for i in range(len(smile_train) * 10):
-        img = (smile_train[i % 3000][0] - 128) / 255.0
-        label = (smile_train[i % 3000][1])
+    for i in range(len(smile_train)):
+        img = smile_train[i][0] / 255.0
+        label = smile_train[i][1]
         train_data.append((img, one_hot(label), 0.0))
 
     current_epoch = (int)(global_step.eval(session=sess) / (len(train_data) // BATCH_SIZE))
