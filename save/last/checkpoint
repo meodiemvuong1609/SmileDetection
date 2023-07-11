@@ -1,0 +1,2 @@
+model_checkpoint_path: "D:\Project\SmileDetection\save/last/model.ckpt"
+all_model_checkpoint_paths: "D:\Project\SmileDetection\save/last/model.ckpt"

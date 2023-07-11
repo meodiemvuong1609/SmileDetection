@@ -2,11 +2,12 @@ import numpy as np
 import scipy
 import random
 from const import *
+import tensorflow as tf
 
 def getSmileImage(BASE_DIR=BASE_DIR):
     print("Loading smile data...")
-    X1 = np.load(BASE_DIR + 'dataset/data1/train.npy')
-    X2 = np.load(BASE_DIR + 'dataset/data1/test.npy')
+    X1 = np.load(BASE_DIR + 'dataset/data1/train.npy', allow_pickle=True)
+    X2 = np.load(BASE_DIR + 'dataset/data1/test.npy', allow_pickle=True)
     train_data = []
     test_data = []
     for i in range(X1.shape[0]):
